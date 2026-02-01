@@ -4,7 +4,8 @@ class ApiConfig {
   // Komut: adb reverse tcp:3000 tcp:3000
 
   static const String baseUrl =
-      'https://waspiest-flintiest-spencer.ngrok-free.dev/api';
+      //'https://waspiest-flintiest-spencer.ngrok-free.dev/api';
+      'http://localhost:3000/api';
 
   // Alternatif: Bilgisayarın yerel IP adresi (Eğer reverse çalışmazsa bunu deneyin)
   // static const String baseUrl = 'http://192.168.1.14:3000/api';

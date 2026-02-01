@@ -44,6 +44,53 @@ class ApiService {
     }
   }
 
+  /// Kategori güncelle
+  static Future<Category> updateCategory(
+    int id,
+    String name,
+    String? icon,
+  ) async {
+    try {
+      final response = await http.put(
+        Uri.parse('$_baseUrl/categories/$id'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'name': name, 'icon': icon}),
+      );
+      if (response.statusCode == 200) {
+        return Category.fromJson(json.decode(response.body));
+      } else {
+        throw Exception('Kategori güncellenemedi: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Bağlantı hatası: $e');
+    }
+  }
+
+  /// Kategori sil
+  static Future<void> deleteCategory(int id) async {
+    try {
+      final response = await http.delete(Uri.parse('$_baseUrl/categories/$id'));
+      if (response.statusCode != 200) {
+        // Hata mesajını backend'den al
+        String errorMessage = 'Kategori silinemedi.';
+        try {
+          final body = json.decode(response.body);
+          if (body['details'] != null) {
+            errorMessage = body['details'];
+          } else if (body['error'] != null) {
+            errorMessage = body['error'];
+          }
+        } catch (_) {}
+
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      // Re-throw if it's already an exception with our message, else generic
+      if (e.toString().startsWith('Exception:')) rethrow;
+      throw Exception('Bağlantı hatası: $e');
+    }
+  }
+
   // ==================== CHECKLIST API ====================
 
   /// Tüm listeleri getir

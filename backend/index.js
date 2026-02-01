@@ -28,6 +28,41 @@ app.post('/api/categories', async (req, res) => {
     }
 });
 
+// Kategori güncelle
+app.put('/api/categories/:id', async (req, res) => {
+    try {
+        const category = await Category.findByPk(req.params.id);
+        if (category) {
+            await category.update(req.body);
+            res.json(category);
+        } else {
+            res.status(404).json({ error: "Kategori bulunamadı" });
+        }
+    } catch (err) {
+        res.status(500).json({ error: "Güncelleme hatası", details: err.message });
+    }
+});
+
+// Kategori sil
+app.delete('/api/categories/:id', async (req, res) => {
+    try {
+        // Kategoriye bağlı liste var mı kontrol et
+        const checklistCount = await Checklist.count({ where: { categoryId: req.params.id } });
+
+        if (checklistCount > 0) {
+            return res.status(400).json({
+                error: "Silinemedi",
+                details: "Bu kategoriye bağlı listeler var. Önce onları silmelisiniz."
+            });
+        }
+
+        await Category.destroy({ where: { id: req.params.id } });
+        res.json({ message: "Kategori silindi" });
+    } catch (err) {
+        res.status(500).json({ error: "Silme hatası", details: err.message });
+    }
+});
+
 // ==================== CHECKLIST ENDPOINTS ====================
 
 // Tüm listeleri getir (Item ve Category ile birlikte)
