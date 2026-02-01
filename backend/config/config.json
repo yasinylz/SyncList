@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "yasin_fedora",
+    "password": "Fedora123!",
+    "database": "WorkShop",
+    "host": "192.168.1.14",
+    "dialect": "mssql"
+  }
+}

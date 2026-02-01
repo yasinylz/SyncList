@@ -1,0 +1,29 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "migrate": "npx sequelize-cli db:migrate",
+    "migrate:undo": "npx sequelize-cli db:migrate:undo",
+    "create-cat-m": "npx sequelize-cli model:generate --name Category --attributes name:string,icon:string",
+    "create-list-m": "npx sequelize-cli model:generate --name Checklist --attributes title:string,categoryId:integer",
+    "create-item-m": "npx sequelize-cli model:generate --name Item --attributes taskName:string,isCompleted:boolean,checklistId:integer"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "mssql": "^12.2.0",
+    "sequelize": "^6.37.7",
+    "tedious": "^19.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11",
+    "sequelize-cli": "^6.6.5"
+  }
+}
