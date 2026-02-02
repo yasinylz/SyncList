@@ -6,7 +6,6 @@ void main() {
   runApp(const SyncListApp());
 }
 
-/// SyncList - Premium Checklist App
 class SyncListApp extends StatelessWidget {
   const SyncListApp({super.key});
 
@@ -27,9 +26,9 @@ class SyncListApp extends StatelessWidget {
       brightness: brightness,
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF6750A4), // Deep Purple
+        seedColor: const Color(0xFF6750A4),
         brightness: brightness,
-        secondary: const Color(0xFFFABD00), // Gold accent
+        secondary: const Color(0xFFFABD00),
       ),
     );
 

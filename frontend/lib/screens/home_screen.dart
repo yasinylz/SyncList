@@ -128,8 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
       expandedHeight: 120.0,
       floating: false,
       pinned: true,
-      backgroundColor:
-          Colors.transparent, // Transparent for background visibility
+      backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: false,
@@ -366,8 +365,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Colors.purple;
   }
 
-  // --- Dialogs ---
-
   Future<void> _showCreateListDialog() async {
     final titleController = TextEditingController();
     int? selectedCategory = _selectedCategoryId;
@@ -495,9 +492,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () async {
-                                // Confirm delete inside this dialog context?
-                                // Better to close and show confirm.
-                                Navigator.pop(context);
                                 _confirmDeleteCategory(cat);
                               },
                             ),
@@ -578,9 +572,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       selectedIcon,
                     );
                     Navigator.pop(context);
-                    // Re-open manage dialog to show new category is nice, but lets just load data
+
                     _loadData();
-                    // Optional: Re-open manage dialog? No, keep it simple.
                   } catch (e) {
                     ScaffoldMessenger.of(
                       context,

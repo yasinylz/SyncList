@@ -3,10 +3,13 @@ const express = require('express');
 const cors = require('cors');
 const { Checklist, Item, Category } = require('./models');
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    allowedHeaders: ['Content-Type', 'Authorization', 'ngrok-skip-browser-warning']
+}));
 app.use(express.json());
 
-// ==================== CATEGORY ENDPOINTS ====================
+
 
 // Tüm kategorileri getir
 app.get('/api/categories', async (req, res) => {
@@ -46,7 +49,7 @@ app.put('/api/categories/:id', async (req, res) => {
 // Kategori sil
 app.delete('/api/categories/:id', async (req, res) => {
     try {
-        // Kategoriye bağlı liste var mı kontrol et
+
         const checklistCount = await Checklist.count({ where: { categoryId: req.params.id } });
 
         if (checklistCount > 0) {
@@ -63,7 +66,6 @@ app.delete('/api/categories/:id', async (req, res) => {
     }
 });
 
-// ==================== CHECKLIST ENDPOINTS ====================
 
 // Tüm listeleri getir (Item ve Category ile birlikte)
 app.get('/api/checklists', async (req, res) => {
@@ -121,9 +123,9 @@ app.put('/api/checklists/:id', async (req, res) => {
 // Liste sil
 app.delete('/api/checklists/:id', async (req, res) => {
     try {
-        // Önce listeye ait tüm maddeleri sil
+
         await Item.destroy({ where: { checklistId: req.params.id } });
-        // Sonra listeyi sil
+
         await Checklist.destroy({ where: { id: req.params.id } });
         res.json({ message: "Liste ve maddeleri silindi" });
     } catch (err) {
@@ -131,7 +133,6 @@ app.delete('/api/checklists/:id', async (req, res) => {
     }
 });
 
-// ==================== ITEM ENDPOINTS ====================
 
 // Belirli bir listeye ait maddeleri getir
 app.get('/api/items/:checklistId', async (req, res) => {

@@ -333,20 +333,11 @@ class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
     return Colors.purple;
   }
 
-  // --- Actions ---
-
   Future<void> _toggleItem(Item item) async {
     try {
-      // Optimistic update
       setState(() {
         final index = _items.indexWhere((i) => i.id == item.id);
-        if (index != -1) {
-          // Local update strictly for UI responsiveness
-          // We assume backend will toggle correctly.
-          // Note: Item model is final, wait, it might not be.
-          // Actually reusing the same object is risky if immutable.
-          // But let's just create a new list for UI update or re-fetch.
-        }
+        if (index != -1) {}
       });
 
       await ApiService.toggleItem(item.id);
@@ -361,7 +352,6 @@ class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
   }
 
   Future<void> _deleteItem(Item item) async {
-    // Optimistic UI removal
     setState(() {
       _items.removeWhere((i) => i.id == item.id);
     });
@@ -369,7 +359,7 @@ class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
     try {
       await ApiService.deleteItem(item.id);
     } catch (e) {
-      _loadItems(); // Rollback on error
+      _loadItems();
       if (mounted) {
         ScaffoldMessenger.of(
           context,
@@ -403,7 +393,7 @@ class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
     if (confirm == true) {
       try {
         await ApiService.deleteChecklist(_checklist.id);
-        if (mounted) Navigator.pop(context); // Go back to home
+        if (mounted) Navigator.pop(context);
       } catch (e) {
         if (mounted)
           ScaffoldMessenger.of(
@@ -498,11 +488,7 @@ class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
   }
 
   Future<void> _showEditListDialog() async {
-    // Note: Assuming ApiService has updateChecklist. It does.
     final titleController = TextEditingController(text: _checklist.title);
-    // Categor ID logic would be needed here to fully support editing,
-    // but for now let's just edit the title to keep it simple or fetch categoryId.
-    // _checklist model has categoryId.
 
     await showDialog(
       context: context,
@@ -535,10 +521,8 @@ class _ChecklistDetailScreenState extends State<ChecklistDetailScreen> {
             value,
             _checklist.categoryId,
           );
-          _loadItems(); // Reload to update title in UI if we were refetching checklist there
-          setState(() {
-            // Optimistic title update if you want, but _loadItems handles it via getChecklist
-          });
+          _loadItems();
+          setState(() {});
         } catch (e) {
           if (mounted)
             ScaffoldMessenger.of(

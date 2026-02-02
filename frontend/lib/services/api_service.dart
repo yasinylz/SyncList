@@ -5,16 +5,23 @@ import '../models/checklist.dart';
 import '../models/category.dart';
 import '../models/item.dart';
 
-/// API Service - Backend ile iletişimi sağlayan servis sınıfı
+/// API Service
 class ApiService {
   static const String _baseUrl = ApiConfig.baseUrl;
 
-  // ==================== CATEGORY API ====================
+  static const Map<String, String> _headers = {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'ngrok-skip-browser-warning': 'true',
+  };
 
   /// Tüm kategorileri getir
   static Future<List<Category>> getCategories() async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/categories'));
+      final response = await http.get(
+        Uri.parse('$_baseUrl/categories'),
+        headers: _headers,
+      );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => Category.fromJson(json)).toList();
@@ -31,7 +38,7 @@ class ApiService {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/categories'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _headers,
         body: json.encode({'name': name, 'icon': icon}),
       );
       if (response.statusCode == 201) {
@@ -53,7 +60,7 @@ class ApiService {
     try {
       final response = await http.put(
         Uri.parse('$_baseUrl/categories/$id'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _headers,
         body: json.encode({'name': name, 'icon': icon}),
       );
       if (response.statusCode == 200) {
@@ -69,34 +76,34 @@ class ApiService {
   /// Kategori sil
   static Future<void> deleteCategory(int id) async {
     try {
-      final response = await http.delete(Uri.parse('$_baseUrl/categories/$id'));
+      final response = await http.delete(
+        Uri.parse('$_baseUrl/categories/$id'),
+        headers: _headers,
+      );
       if (response.statusCode != 200) {
-        // Hata mesajını backend'den al
         String errorMessage = 'Kategori silinemedi.';
         try {
           final body = json.decode(response.body);
-          if (body['details'] != null) {
+          if (body['details'] != null)
             errorMessage = body['details'];
-          } else if (body['error'] != null) {
+          else if (body['error'] != null)
             errorMessage = body['error'];
-          }
         } catch (_) {}
-
         throw Exception(errorMessage);
       }
     } catch (e) {
-      // Re-throw if it's already an exception with our message, else generic
       if (e.toString().startsWith('Exception:')) rethrow;
       throw Exception('Bağlantı hatası: $e');
     }
   }
 
-  // ==================== CHECKLIST API ====================
-
   /// Tüm listeleri getir
   static Future<List<Checklist>> getChecklists() async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/checklists'));
+      final response = await http.get(
+        Uri.parse('$_baseUrl/checklists'),
+        headers: _headers,
+      );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         return data.map((json) => Checklist.fromJson(json)).toList();
@@ -111,7 +118,10 @@ class ApiService {
   /// Tek bir listeyi getir
   static Future<Checklist> getChecklist(int id) async {
     try {
-      final response = await http.get(Uri.parse('$_baseUrl/checklists/$id'));
+      final response = await http.get(
+        Uri.parse('$_baseUrl/checklists/$id'),
+        headers: _headers,
+      );
       if (response.statusCode == 200) {
         return Checklist.fromJson(json.decode(response.body));
       } else {
@@ -130,7 +140,7 @@ class ApiService {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/checklists'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _headers,
         body: json.encode({'title': title, 'categoryId': categoryId}),
       );
       if (response.statusCode == 201) {
@@ -152,7 +162,7 @@ class ApiService {
     try {
       final response = await http.put(
         Uri.parse('$_baseUrl/checklists/$id'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _headers,
         body: json.encode({'title': title, 'categoryId': categoryId}),
       );
       if (response.statusCode == 200) {
@@ -168,7 +178,10 @@ class ApiService {
   /// Liste sil
   static Future<void> deleteChecklist(int id) async {
     try {
-      final response = await http.delete(Uri.parse('$_baseUrl/checklists/$id'));
+      final response = await http.delete(
+        Uri.parse('$_baseUrl/checklists/$id'),
+        headers: _headers,
+      );
       if (response.statusCode != 200) {
         throw Exception('Liste silinemedi: ${response.statusCode}');
       }
@@ -177,13 +190,12 @@ class ApiService {
     }
   }
 
-  // ==================== ITEM API ====================
-
   /// Listeye ait maddeleri getir
   static Future<List<Item>> getItems(int checklistId) async {
     try {
       final response = await http.get(
         Uri.parse('$_baseUrl/items/$checklistId'),
+        headers: _headers,
       );
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -201,7 +213,7 @@ class ApiService {
     try {
       final response = await http.post(
         Uri.parse('$_baseUrl/items'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _headers,
         body: json.encode({
           'taskName': taskName,
           'checklistId': checklistId,
@@ -223,7 +235,7 @@ class ApiService {
     try {
       final response = await http.patch(
         Uri.parse('$_baseUrl/items/$id/toggle'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _headers,
       );
       if (response.statusCode == 200) {
         return Item.fromJson(json.decode(response.body));
@@ -240,7 +252,7 @@ class ApiService {
     try {
       final response = await http.put(
         Uri.parse('$_baseUrl/items/$id'),
-        headers: {'Content-Type': 'application/json'},
+        headers: _headers,
         body: json.encode({'taskName': taskName}),
       );
       if (response.statusCode == 200) {
@@ -256,7 +268,10 @@ class ApiService {
   /// Madde sil
   static Future<void> deleteItem(int id) async {
     try {
-      final response = await http.delete(Uri.parse('$_baseUrl/items/$id'));
+      final response = await http.delete(
+        Uri.parse('$_baseUrl/items/$id'),
+        headers: _headers,
+      );
       if (response.statusCode != 200) {
         throw Exception('Madde silinemedi: ${response.statusCode}');
       }
